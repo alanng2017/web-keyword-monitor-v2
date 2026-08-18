@@ -1,0 +1,48 @@
+# ============================================================
+# 网页关键词监控 配置示例
+# 复制为 config.yaml 后填写你自己的信息
+# 注意: config.yaml 含 cookies/webhook 等敏感信息, 已被 .gitignore 排除
+# ============================================================
+
+# 监控站点列表
+sites:
+  - name: example                # 站点名称(用于通知显示)
+    url: https://example.com     # 监控的页面 URL
+    method: GET                  # GET / POST
+    cookies: ""                  # 浏览器复制的 Cookie 头粘贴于此, 可留空
+    keywords:                    # 关键词列表
+      - 重要通知
+      - 紧急
+    match_mode: any              # any=任一命中即报; all=全部命中才报
+    case_sensitive: false        # 是否大小写敏感
+    selector: ""                 # 检查区域正则(留空=全页), 如: <div id="notice">.*?</div>
+    headers: {}                  # 额外请求头, 如 {"X-Token": "..."}
+
+# 推送通知 (至少配一个)
+notify:
+  feishu_webhook: ""             # 飞书机器人 webhook URL
+  dingtalk_webhook: ""           # 钉钉机器人 webhook URL (可选)
+  dingtalk_secret: ""            # 钉钉加签密钥 SEC 开头 (可选)
+
+# 运行参数
+state_file: state.json           # 基线状态文件 (记录上次命中)
+log_file: monitor.log            # 日志文件 (自动轮转, 单文件2MB x 3备份)
+interval: 3600                   # 常驻模式轮询间隔(秒)
+update_probability: 1.0          # 每轮实际执行检查的概率 0.1~1.0, 模拟真人随机访问
+browser_sim: true                # true=curl_cffi 浏览器指纹模拟(防反爬)
+politeness_jitter: [1.0, 3.0]    # 站点间随机延迟范围(秒), [0,0] 禁用
+
+# 请求引擎
+request:
+  timeout: 30                    # 单次请求超时(秒)
+  retries: 3                     # 失败重试次数(仅网络错误/429/5xx)
+  backoff: 2.0                   # 重试退避基数(秒): 等待 backoff*2^n+抖动
+  impersonate: chrome            # curl_cffi 指纹目标, 不带版本号=自动跟进最新
+  proxy: ""                      # 代理, 如 http://user:pass@host:port / socks5://host:port
+  verify_ssl: true               # 是否校验证书
+  user_agent: "Mozilla/5.0 ..."  # 仅 browser_sim=false 或 curl_cffi 不可用时使用
+
+# Web 配置界面 (web-keyword-monitor-web.py)
+web:
+  port: 8800
+  password: "change-me"          # Web 界面访问密码, 必须修改!
