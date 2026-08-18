@@ -1,0 +1,25 @@
+# 敏感配置文件 — 绝不要提交到仓库
+config.yaml
+state.json
+monitor.log*
+.secret_key
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
