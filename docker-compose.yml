@@ -1,0 +1,27 @@
+services:
+  web-keyword-monitor:
+    build: .
+    image: web-keyword-monitor:latest
+    container_name: web-keyword-monitor
+    restart: unless-stopped
+    volumes:
+      - ./config.yaml:/app/config/config.yaml:ro
+      - ./data:/app/data
+    # 默认每600秒检查一次，可改
+    command: ["python3", "web-keyword-monitor.py", "--config", "/app/config/config.yaml", "--interval", "600"]
+
+  web-keyword-monitor-web:
+    image: web-keyword-monitor:latest
+    container_name: web-keyword-monitor-web
+    restart: unless-stopped
+    ports:
+      - "8800:8800"
+    volumes:
+      - ./config.yaml:/app/config/config.yaml
+      - ./data:/app/data
+    environment:
+      - CONFIG=/app/config/config.yaml
+      - LOG_FILE=/app/data/monitor.log
+      - STATE_FILE=/app/data/state.json
+      - WEB_PORT=8800
+    command: ["python3", "web-keyword-monitor-web.py"]
